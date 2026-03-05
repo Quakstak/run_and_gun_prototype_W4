@@ -5,6 +5,9 @@
 from __future__ import annotations
 import pygame
 
+from src.weapons.shotgun import Shotgun
+from src.weapons.smg import SMG
+
 from ..utils import load_image, slice_sprite_sheet_row
 from ..weapons.weapon import Weapon
 from ..weapons.pistol import Pistol
@@ -90,6 +93,7 @@ class Player(pygame.sprite.Sprite):
         self.vel = pygame.Vector2(0.0, 0.0)
         self.on_ground = False
         self.facing = 1
+        self.aiming = 1  # -1 for left, 1 for right (used for shooting direction)
 
         # Character tuning (per-character stats)
         self.move_speed = float(move_speed)
@@ -149,12 +153,28 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_a]:
             self.vel.x -= self.move_speed
             self.facing = -1
+            self.aiming = -1
             self.moving = True
 
         if keys[pygame.K_d]:
             self.vel.x += self.move_speed
             self.facing = 1
+            self.aiming = 1
             self.moving = True
+
+        if keys[pygame.K_w]:
+            self.aiming = 0  # aiming up
+        else:
+            self.aiming = self.facing  # reset to horizontal aiming when not holding up
+
+
+        # Weapon switching (for testing)
+        if keys[pygame.K_1]:
+            self.weapon = Pistol()
+        elif keys[pygame.K_2]:
+            self.weapon = SMG()
+        elif keys[pygame.K_3]:  # added keybind for shotgun
+            self.weapon = Shotgun()
 
     def queue_jump(self) -> None:
         """Called on key press. Stores jump for short time."""
@@ -167,11 +187,11 @@ class Player(pygame.sprite.Sprite):
 
     def try_shoot(self, bullets_group: pygame.sprite.Group) -> bool:
         muzzle = pygame.Vector2(
-            self.rect.centerx + self.muzzle_dx * self.facing,
+            self.rect.centerx + self.muzzle_dx * self.aiming,
             self.rect.centery + self.muzzle_dy,
         )
         before = len(bullets_group)
-        self.weapon.shoot(bullets_group, muzzle, self.facing)
+        self.weapon.shoot(bullets_group, muzzle, self.aiming)
         return len(bullets_group) > before
 
     # --------------------------

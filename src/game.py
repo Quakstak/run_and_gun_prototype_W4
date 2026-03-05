@@ -92,6 +92,10 @@ class Game:
 
     # ------------------ Events ------------------
     def handle_events(self) -> None:
+        if pygame.mouse.get_pressed()[0]==True and self.state == "PLAYING":  # left click also shoots
+                fired = self.player.try_shoot(self.bullets)
+                if fired and not settings.SOUND_OFF:
+                    self.sfx_shoot.play()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
@@ -116,17 +120,15 @@ class Game:
 
                 if self.state == "PLAYING":
                     # self.player is guaranteed in PLAYING
-                    if event.key == pygame.K_w:
-                        self.player.queue_jump()
-
                     if event.key == pygame.K_SPACE:
-                        fired = self.player.try_shoot(self.bullets)
-                        if fired and not settings.SOUND_OFF:
-                            self.sfx_shoot.play()
-
+                        self.player.queue_jump()
+                    
             if event.type == pygame.KEYUP and self.state == "PLAYING":
                 if event.key == pygame.K_w:
                     self.player.cut_jump()
+
+# event.type == pygame.MOUSEBUTTONDOWN
+            
 
     # ------------------ Update ------------------
     def update(self, dt: float) -> None:
