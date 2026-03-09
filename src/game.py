@@ -286,14 +286,7 @@ class Game:
             self.draw_center_text("Press ENTER to replay (add more levels!)", y=290, target=self.window)
             
         # DEBUG: show all idle frames in a row
-        if self.state == "PLAYING":
-            x = 50
-            y = settings.WINDOW_HEIGHT - 80
 
-            for frame in self.player.anim_idle:
-                img = pygame.transform.scale(frame, (frame.get_width() * 2, frame.get_height() * 2))
-                self.window.blit(img, (x, y))
-                x += img.get_width() + 10
 
         pygame.display.flip()
 
