@@ -19,6 +19,28 @@ A small **teaching-friendly** prototype for a first-year *run-and-gun* side-scro
 - **R**: Restart on Game Over
 - **Esc**: Quit
 
+## Remove redundant files from git
+.gitignore file should stop __pycache__ and .venv from being saved and downloaded every time
+
+You can remove it from your local (and then remote) repository with
+
+```bash
+git rm -r --cached __pycache__
+git commit -m "Remove __pycache__ from repository"
+git push 
+```
+
+You can do similar with .venv
+
+```bash
+deactivate
+git rm -r --cached .venv
+git commit -m "Remove .venv from repository"
+git push 
+```
+
+After doing this you will need to recreate your .venv and install the requirements as described below.
+
 ## Run
 ```bash
 python -m venv .venv
@@ -27,8 +49,16 @@ python -m venv .venv
 .venv\Scripts\activate
 
 
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 python -m src.main
+```
+
+If this brings up an error about pygame.base not loading then do the following
+
+```bash
+python -m pip uninstall pygame-ce
+python -m pip cache purge
+python -m pip install pygame-ce
 ```
 
 ## Level tiles (CSV)
