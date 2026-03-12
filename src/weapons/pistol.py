@@ -13,4 +13,4 @@ class Pistol(Weapon):
     """
 
     def __init__(self):
-        super().__init__(burst_bullets=1, spread_deg=0.0, cooldown=0.15)
+        super().__init__(burst_bullets=1, spread_deg=0.0, cooldown=0.25)

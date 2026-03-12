@@ -5,6 +5,9 @@
 from __future__ import annotations
 import pygame
 
+from src.weapons.shotgun import Shotgun
+from src.weapons.smg import SMG
+
 from ..utils import load_image, slice_sprite_sheet_row
 from ..weapons.weapon import Weapon
 from ..weapons.pistol import Pistol
@@ -154,11 +157,13 @@ class Player(pygame.sprite.Sprite):
             self.vel.x -= self.move_speed
             self.facing = -1
             self.aiming = -1
+            self.aiming = -1
             self.moving = True
 
         if keys[pygame.K_d]:
             self.vel.x += self.move_speed
             self.facing = 1
+            self.aiming = 1
             self.aiming = 1
             self.moving = True
 
@@ -187,9 +192,11 @@ class Player(pygame.sprite.Sprite):
     def try_shoot(self, bullets_group: pygame.sprite.Group) -> bool:
         muzzle = pygame.Vector2(
             self.rect.centerx + self.muzzle_dx * self.aiming,
+            self.rect.centerx + self.muzzle_dx * self.aiming,
             self.rect.centery + self.muzzle_dy,
         )
         before = len(bullets_group)
+        self.weapon.shoot(bullets_group, muzzle, self.aiming)
         self.weapon.shoot(bullets_group, muzzle, self.aiming)
         return len(bullets_group) > before
 

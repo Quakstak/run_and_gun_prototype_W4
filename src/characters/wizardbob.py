@@ -6,6 +6,8 @@ from __future__ import annotations
 
 from .player import Player
 from ..weapons.pistol import Pistol
+from ..weapons.smg import SMG
+from ..weapons.shotgun import Shotgun
 from .. import settings
 
 
@@ -15,6 +17,7 @@ class WizardBob(Player):
         # row 4 idle (6 frames), row 3 run (8 frames), row 5 jump (8 frames)
         super().__init__(
             pos,
+            # Sprite sheet parameters and animation parameters:
             sprite_sheet="player_sheet.png",
             idle_row=4,
             run_row=3,
@@ -32,8 +35,9 @@ class WizardBob(Player):
             idle_frame_duration=0.15,
             run_frame_duration=0.20,
             jump_frame_duration=0.12,
+            # Gameplay parameters:
             max_health=settings.PLAYER_MAX_HEALTH,
             move_speed=settings.PLAYER_SPEED,
             jump_speed=settings.JUMP_SPEED,
-            weapon=Pistol(),
+            weapon=Shotgun(),
         )
