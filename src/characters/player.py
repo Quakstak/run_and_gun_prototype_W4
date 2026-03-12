@@ -8,6 +8,9 @@ import pygame
 from ..utils import load_image, slice_sprite_sheet_row
 from ..weapons.weapon import Weapon
 from ..weapons.pistol import Pistol
+from ..weapons.shotgun import Shotgun
+from ..weapons.smg import SMG
+
 from ..animation import Animation
 from .. import settings
 
@@ -90,6 +93,7 @@ class Player(pygame.sprite.Sprite):
         self.vel = pygame.Vector2(0.0, 0.0)
         self.on_ground = False
         self.facing = 1
+        self.aiming = 1 # (1 = right, -1 = left) used for aiming direction when shooting independently of movement direction
 
         # Character tuning (per-character stats)
         self.move_speed = float(move_speed)
@@ -149,12 +153,27 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_a]:
             self.vel.x -= self.move_speed
             self.facing = -1
+            self.aiming = -1
             self.moving = True
 
         if keys[pygame.K_d]:
             self.vel.x += self.move_speed
             self.facing = 1
+            self.aiming = 1
             self.moving = True
+
+        if keys[pygame.K_w]:
+            self.aiming = 0 #aiming up when W is held, regardless of movement direction
+        else:
+            self.aiming = self.facing #if W is not held, aim in movement direction
+
+        #Weapon switching (for testing)
+        if keys[pygame.K_1]:
+            self.weapon = Pistol()
+        elif keys[pygame.K_2]:
+            self.weapon = Shotgun()
+        elif keys[pygame.K_3]:
+            self.weapon = SMG()
 
     def queue_jump(self) -> None:
         """Called on key press. Stores jump for short time."""
@@ -167,11 +186,11 @@ class Player(pygame.sprite.Sprite):
 
     def try_shoot(self, bullets_group: pygame.sprite.Group) -> bool:
         muzzle = pygame.Vector2(
-            self.rect.centerx + self.muzzle_dx * self.facing,
+            self.rect.centerx + self.muzzle_dx * self.aiming,
             self.rect.centery + self.muzzle_dy,
         )
         before = len(bullets_group)
-        self.weapon.shoot(bullets_group, muzzle, self.facing)
+        self.weapon.shoot(bullets_group, muzzle, self.aiming)
         return len(bullets_group) > before
 
     # --------------------------
